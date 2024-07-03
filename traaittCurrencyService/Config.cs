@@ -10,51 +10,50 @@ namespace traaittCurrencyService
         // Loads config values from file
         public static async Task LoadConfig()
         {
-            if (!File.Exists(configFile))
-            {
-                await SaveConfig();
-            }
+            // Check if config file exists and create it if it doesn't
+            if (!File.Exists(configFile)) await SaveConfig();
             else
             {
-                JObject configJson = JObject.Parse(File.ReadAllText(configFile));
-
-                databaseFile = (string)configJson["databaseFile"];
-                logLevel = (int)configJson["logLevel"];
-                botToken = (string)configJson["botToken"];
-                botPrefix = (string)configJson["botPrefix"];
-                botMessageCache = (int)configJson["botMessageCache"];
-                coinName = (string)configJson["coinName"];
-                coinSymbol = (string)configJson["coinSymbol"];
-                coinUnits = (decimal)configJson["coinUnits"];
-                coinAddressLength = (int)configJson["coinAddressLength"];
-                coinAddressPrefix = (string)configJson["coinAddressPrefix"];
-                tipFee = (decimal)configJson["tipFee"];
-                tipMixin = (int)configJson["tipMixin"];
-                tipSuccessReact = (string)configJson["tipSuccessReact"];
-                tipFailedReact = (string)configJson["tipFailedReact"];
-                tipLowBalanceReact = (string)configJson["tipLowBalanceReact"];
-                tipJoinReact = (string)configJson["tipJoinReact"];
-                tipCustomReacts = configJson["tipCustomReacts"].ToObject<Dictionary<string, decimal>>();
-                faucetHost = (string)configJson["faucetHost"];
-                faucetEndpoint = (string)configJson["faucetEndpoint"];
-                faucetAddress = (string)configJson["faucetAddress"];
-                marketSource = (string)configJson["marketSource"];
-                marketEndpoint = (string)configJson["marketEndpoint"];
-                marketBTCEndpoint = (string)configJson["marketBTCEndpoint"];
-                marketDisallowedServers = configJson["marketDisallowedServers"].ToObject<List<ulong>>();
-                daemonHost = (string)configJson["daemonHost"];
-                daemonPort = (int)configJson["daemonPort"];
-                walletHost = (string)configJson["walletHost"];
-                walletPort = (int)configJson["walletPort"];
-                walletRpcPassword = (string)configJson["walletRpcPassword"];
-                walletUpdateDelay = (int)configJson["walletUpdateDelay"];
+                // Load values
+                JObject Config = JObject.Parse(File.ReadAllText(configFile));
+                databaseFile = (string)Config["databaseFile"];
+                logLevel = (int)Config["logLevel"];
+                botToken = (string)Config["botToken"];
+                botPrefix = (string)Config["botPrefix"];
+                botMessageCache = (int)Config["botMessageCache"];
+                coinName = (string)Config["coinName"];
+                coinSymbol = (string)Config["coinSymbol"];
+                coinUnits = (decimal)Config["coinUnits"];
+                coinAddressLength = (int)Config["coinAddressLength"];
+                coinAddressPrefix = (string)Config["coinAddressPrefix"];
+                tipFee = (decimal)Config["tipFee"];
+                tipMixin = (int)Config["tipMixin"];
+                tipSuccessReact = (string)Config["tipSuccessReact"];
+                tipFailedReact = (string)Config["tipFailedReact"];
+                tipLowBalanceReact = (string)Config["tipLowBalanceReact"];
+                tipJoinReact = (string)Config["tipJoinReact"];
+                tipCustomReacts = Config["tipCustomReacts"].ToObject<Dictionary<string, decimal>>();
+                faucetHost = (string)Config["faucetHost"];
+                faucetEndpoint = (string)Config["faucetEndpoint"];
+                faucetAddress = (string)Config["faucetAddress"];
+                marketSource = (string)Config["marketSource"];
+                marketEndpoint = (string)Config["marketEndpoint"];
+                marketBTCEndpoint = (string)Config["marketBTCEndpoint"];
+                marketDisallowedServers = Config["marketDisallowedServers"].ToObject<List<ulong>>();
+                daemonHost = (string)Config["daemonHost"];
+                daemonPort = (int)Config["daemonPort"];
+                walletHost = (string)Config["walletHost"];
+                walletPort = (int)Config["walletPort"];
+                walletRpcPassword = (string)Config["walletRpcPassword"];
+                walletUpdateDelay = (int)Config["walletUpdateDelay"];
             }
         }
 
         // Saves config values to file
-        public static async Task SaveConfig()
+        public static Task SaveConfig()
         {
-            JObject configJson = new JObject
+            // Store values
+            JObject Config = new JObject
             {
                 ["databaseFile"] = databaseFile,
                 ["logLevel"] = logLevel,
@@ -88,7 +87,11 @@ namespace traaittCurrencyService
                 ["walletUpdateDelay"] = walletUpdateDelay
             };
 
-            await File.WriteAllTextAsync(configFile, configJson.ToString());
+            // Flush to file
+            File.WriteAllText(configFile, Config.ToString());
+
+            // Completed
+            return Task.CompletedTask;
         }
     }
 }
